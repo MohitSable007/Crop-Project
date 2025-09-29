@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Smart Crop Advisory – Punjab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Natural grain for a farm-like feel */
+    .grain { position: relative; overflow: hidden; }
+    .grain:before {
+      content:""; position:absolute; inset:0;
+      background-image: radial-gradient(rgba(0,0,0,.06) 1px, transparent 1px);
+      background-size: 3px 3px; opacity:.35; pointer-events:none;
+    }
+    .nice-scroll::-webkit-scrollbar{width:10px}
+    .nice-scroll::-webkit-scrollbar-track{background:rgba(0,0,0,.05);border-radius:999px}
+    .nice-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.25);border-radius:999px}
+    .nice-scroll{scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.25) rgba(0,0,0,.05)}
+    .icon{width:22px;height:22px}
+    .fade-in{animation:fade .5s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .pulse{box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:pulse 1.5s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}70%{box-shadow:0 0 0 12px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-green-100 via-yellow-50 to-sky-100 text-slate-800 antialiased">
+  <div id="app" class="min-h-screen">
+
+    <!-- LOGIN PAGE -->
+    <section id="page-login" class="min-h-screen grid lg:grid-cols-2">
+      <!-- Left visual: Punjab fields vibe -->
+      <div class="grain hidden lg:block relative">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-600 via-emerald-600 to-lime-700"></div>
+        <!-- Layered fields in Punjab tones -->
+        <svg class="absolute inset-x-0 bottom-0 w-full h-2/3 opacity-95" viewBox="0 0 1440 600" preserveAspectRatio="none">
+          <path fill="#fef08a" d="M0,260 C220,320 420,180 720,260 C1020,340 1180,320 1440,280 L1440,600 L0,600 Z"></path>
+          <path fill="#a7f3d0" d="M0,320 C220,380 420,240 720,320 C1020,400 1180,380 1440,340 L1440,600 L0,600 Z"></path>
+          <path fill="#93c5fd" d="M0,380 C220,440 420,300 720,380 C1020,460 1180,440 1440,400 L1440,600 L0,600 Z"></path>
+        </svg>
+        <div class="relative z-10 h-full flex items-center p-12">
+          <div class="max-w-xl text-white drop-shadow">
+            <h1 class="text-4xl font-semibold">Punjab Smart Crop Advisory</h1>
+            <p class="mt-4 text-emerald-50 text-lg">
+              Local weather alerts, soil and fertilizer tips, crop advisories, pest checks, and mandi prices — tailored for Punjab farmers.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="relative flex items-center justify-center p-6 sm:p-12">
+        <div class="w-full max-w-xl bg-white/85 backdrop-blur rounded-2xl shadow-xl p-6 sm:p-8 space-y-6 fade-in">
+          <div class="flex items-center gap-3">
+            <div class="h-11 w-11 rounded-xl bg-green-600 text-white grid place-items-center">
+              <!-- Wheat ear icon -->
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3v18M8 6c2 0 4 2 4 4M8 10c2 0 4 2 4 4M8 14c2 0 4 2 4 4M16 6c-2 0-4 2-4 4M16 10c-2 0-4 2-4 4M16 14c-2 0-4 2-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold">Welcome, Farmer</h2>
+              <p class="text-slate-500 text-sm">Enter details for a personalized Punjab advisory</p>
+            </div>
+          </div>
+
+          <form id="login-form" class="grid grid-cols-1 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Farmer Name</label>
+              <input id="name" type="text" placeholder="e.g., Gurpreet Singh" required
+                     class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400">
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Language</label>
+                <select id="language" class="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-green-400">
+                  <option value="Punjabi" selected>Punjabi</option>
+                  <option value="Hindi">Hindi</option>
+                  <option value="English">English</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Soil Type</label>
+                <select id="soil" class="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-green-400">
+                  <option>Alluvial</option>
+                  <option>Sandy</option>
+                  <option>Clay</option>
+                  <option selected>Loam</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Location (District)</label>
+              <select id="location" class="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-green-400">
+                <option>Ludhiana</option>
+                <option>Amritsar</option>
+                <option>Patiala</option>
+                <option>Jalandhar</option>
+                <option>Sangrur</option>
+                <option>Bathinda</option>
+                <option>Ferozepur</option>
+                <option>Gurdaspur</option>
+                <option>Hoshiarpur</option>
+                <option>Faridkot</option>
+                <option>Mansa</option>
+                <option>Fazilka</option>
+                <option>Pathankot</option>
+                <option>Kapurthala</option>
+                <option>Moga</option>
+                <option>Rupnagar</option>
+                <option>SAS Nagar (Mohali)</option>
+                <option>Nawanshahr (SBS Nagar)</option>
+                <option>Tarn Taran</option>
+                <option>Barnala</option>
+              </select>
+            </div>
+
+            <button type="submit"
+                    class="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 text-white px-5 py-3 font-medium hover:bg-green-700 transition">
+              Continue
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </form>
+
+          <div class="text-xs text-slate-500">
+            Demo only. No data is stored or shared.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="page-dashboard" class="hidden">
+      <div class="min-h-screen grid lg:grid-cols-[290px_1fr_360px]">
+        <!-- LEFT: profile and welcome -->
+        <aside class="bg-white/85 backdrop-blur grain border-r border-slate-200 p-5 lg:p-6">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-green-600 text-white grid place-items-center">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <path d="M12 12a4 4 0 1 0-0.001-8.001A4 4 0 0 0 12 12Z" stroke="currentColor" stroke-width="2" />
+                <path d="M4 21c0-4 4-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p id="welcome-title" class="text-sm text-slate-500">Welcome</p>
+              <h3 id="welcome-name" class="text-lg font-semibold">Farmer</h3>
+            </div>
+          </div>
+
+          <div class="mt-6 space-y-4 text-sm">
+            <div class="rounded-xl border border-sky-100 bg-sky-50 p-4">
+              <p class="text-slate-500">Location</p>
+              <p id="welcome-location" class="font-medium">—</p>
+            </div>
+            <div class="rounded-xl border border-yellow-100 bg-yellow-50 p-4">
+              <p class="text-slate-500">Soil Type</p>
+              <p id="welcome-soil" class="font-medium">Loam</p>
+            </div>
+            <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+              <p class="text-slate-500">Language</p>
+              <p id="welcome-language" class="font-medium">Punjabi</p>
+            </div>
+          </div>
+
+          <div class="mt-6 space-y-2">
+            
+            <button id="logout" class="w-full rounded-xl border border-slate-200 px-4 py-2 hover:bg-slate-50">
+              Logout
+            </button>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="p-5 lg:p-7 space-y-6 nice-scroll">
+          <!-- Header -->
+          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h2 class="text-2xl font-semibold">Your Punjab Field Insights</h2>
+              <p class="text-slate-500 text-sm">Timely alerts and advisories for local crops</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="refresh" class="rounded-xl bg-green-600 text-white px-4 py-2 hover:bg-green-700">Refresh</button>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <div class="grid md:grid-cols-2 gap-6">
+            <!-- Weather alerts -->
+            <section class="rounded-2xl bg-white/90 backdrop-blur border border-sky-100 p-5 fade-in">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="h-9 w-9 rounded-lg bg-sky-100 text-sky-700 grid place-items-center">
+                    <!-- Cloud -->
+                    <svg class="icon" viewBox="0 0 24 24" fill="none">
+                      <path d="M7 18a5 5 0 1 1 2-9.58A7 7 0 1 1 19 17H7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <h3 class="font-semibold">Weather-based alerts</h3>
+                </div>
+                <span class="text-xs text-slate-500">Punjab districts</span>
+              </div>
+              <ul id="weather-list" class="space-y-2 text-sm"></ul>
+            </section>
+
+            <!-- Soil + Fertilizer -->
+            <section class="rounded-2xl bg-white/90 backdrop-blur border border-green-100 p-5 fade-in">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="h-9 w-9 rounded-lg bg-green-100 text-green-700 grid place-items-center">
+                  <!-- Soil layers -->
+                  <svg class="icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 7h18M5 12h14M7 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <h3 class="font-semibold">Soil health & fertilizer guidance</h3>
+              </div>
+              <ul id="soil-list" class="space-y-2 text-sm"></ul>
+            </section>
+
+            <!-- Crop-specific advisory -->
+            <section class="rounded-2xl bg-white/90 backdrop-blur border border-yellow-100 p-5 fade-in md:col-span-2">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="h-9 w-9 rounded-lg bg-yellow-100 text-yellow-700 grid place-items-center">
+                  <!-- Crop icon -->
+                  <svg class="icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 20c4 0 6-4 6-8S10 4 6 4v16ZM18 20c-4 0-6-4-6-8s2-8 6-8v16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <h3 class="font-semibold">Crop-specific advisory</h3>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <select id="crop-select" class="rounded-lg border border-slate-200 px-3 py-2 bg-white text-sm">
+                  <option value="Paddy" selected>Paddy</option>
+                  <option value="Wheat">Wheat</option>
+                  <option value="Maize">Maize</option>
+                  <option value="Cotton">Cotton</option>
+                  <option value="Sugarcane">Sugarcane</option>
+                  <option value="Mustard">Mustard</option>
+                </select>
+                <button id="crop-update" class="rounded-lg bg-yellow-500 text-white px-3 py-2 text-sm hover:bg-yellow-600">
+                  Update
+                </button>
+              </div>
+              <ul id="crop-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm"></ul>
+            </section>
+
+            <!-- Pest / disease -->
+            <section class="rounded-2xl bg-white/90 backdrop-blur border border-rose-100 p-5 fade-in">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="h-9 w-9 rounded-lg bg-rose-100 text-rose-700 grid place-items-center">
+                    <!-- Bug -->
+                    <svg class="icon" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 7a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0v-7a3 3 0 0 0-3-3Z" stroke="currentColor" stroke-width="2"/>
+                      <path d="M4 13h4M16 13h4M6 9l2 2M18 9l-2 2M6 17l2-2M18 17l-2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <h3 class="font-semibold">Pest & disease detection</h3>
+                </div>
+                <span class="text-xs text-slate-500">Demo</span>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-4">
+                <p class="text-sm text-slate-600 mb-3">
+                  Upload a crop image (e.g., rice blast, cotton bollworm) to simulate detection.
+                </p>
+                <input id="pest-image" type="file" accept="image/*"
+                       class="w-full text-sm file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-rose-600 file:text-white hover:file:bg-rose-700">
+                <div id="pest-result" class="text-sm mt-3 hidden">
+                  <div class="rounded-lg bg-rose-50 border border-rose-100 p-3 text-rose-700">
+                    Sample result: Possible issue detected. For rice: signs resemble rice blast; ensure balanced nitrogen and avoid leaf wetness. For cotton: monitor for bollworm; use pheromone traps and follow local IPM.
+                  </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2">Note: This is a visual demo only.</p>
+              </div>
+            </section>
+
+            <!-- Market prices -->
+            <section class="rounded-2xl bg-white/90 backdrop-blur border border-amber-100 p-5 fade-in md:col-span-2">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="h-9 w-9 rounded-lg bg-amber-100 text-amber-700 grid place-items-center">
+                    <!-- Rupee -->
+                    <svg class="icon" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 5h12M6 9h12M6 13h8a4 4 0 1 1 0 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 class="font-semibold">Mandi price tracking (Punjab)</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                  <select id="market-crop" class="rounded-lg border border-slate-200 px-3 py-2 bg-white text-sm">
+                    <option>Wheat</option>
+                    <option selected>Paddy</option>
+                    <option>Maize</option>
+                    <option>Cotton</option>
+                    <option>Sugarcane</option>
+                    <option>Mustard</option>
+                  </select>
+                  <button id="market-refresh" class="rounded-lg bg-sky-600 text-white px-3 py-2 text-sm hover:bg-sky-700">Update</button>
+                </div>
+              </div>
+              <div id="market-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm"></div>
+            </section>
+          </div>
+        </main>
+
+        <!-- RIGHT: Chatbot -->
+        <aside class="relative bg-white/92 backdrop-blur border-l border-slate-200">
+          <div class="sticky top-0 h-screen flex flex-col">
+            <div class="p-5 border-b border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-slate-800 text-white grid place-items-center">
+                  <!-- Chat bubble -->
+                  <svg class="icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 12a8 8 0 1 1-3.1-6.3L21 6v6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold">AI Chatbot</h3>
+                  <p class="text-xs text-slate-500">Answers in your chosen language</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="chat-area" class="flex-1 p-4 space-y-3 overflow-y-auto nice-scroll">
+              <div class="flex gap-2">
+                <div class="h-7 w-7 rounded-full bg-slate-800 text-white grid place-items-center text-xs">AI</div>
+                <div id="chat-welcome" class="max-w-[80%] rounded-2xl rounded-tl-sm bg-slate-100 p-3 text-sm">
+                  Hello! Ask about weather, soil, fertilizers, pests, and mandi prices.
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 border-t border-slate-200">
+              <form id="chat-form" class="flex items-center gap-2">
+                <input id="chat-input" type="text" placeholder="Type your question..."
+                       class="flex-1 rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400">
+                <button id="chat-mic" type="button" title="Voice input (demo)"
+                        class="h-11 w-11 rounded-xl bg-green-600 text-white grid place-items-center hover:bg-green-700">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M5 11a7 7 0 0 0 14 0M12 18v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <button class="h-11 px-4 rounded-xl bg-slate-800 text-white hover:bg-slate-900">Send</button>
+              </form>
+              <p class="text-[11px] text-slate-500 mt-2">
+                Note: Voice input is a visual demo only because Canva Code does not support audio yet.
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Basic state
+    const state = {
+      user: null,
+      marketData: {
+        Paddy: [
+          { mandi: "Khanna", price: 2150 },
+          { mandi: "Amritsar", price: 2200 },
+          { mandi: "Ludhiana", price: 2180 }
+        ],
+        Wheat: [
+          { mandi: "Khanna", price: 2100 },
+          { mandi: "Amritsar", price: 2050 },
+          { mandi: "Ludhiana", price: 2125 }
+        ],
+        Maize: [
+          { mandi: "Jalandhar", price: 1750 },
+          { mandi: "Bathinda", price: 1700 },
+          { mandi: "Sangrur", price: 1720 }
+        ],
+        Cotton: [
+          { mandi: "Bathinda", price: 6400 },
+          { mandi: "Mansa", price: 6300 },
+          { mandi: "Fazilka", price: 6450 }
+        ],
+        Sugarcane: [
+          { mandi: "Gurdaspur", price: 340 },
+          { mandi: "Hoshiarpur", price: 345 },
+          { mandi: "Pathankot", price: 338 }
+        ],
+        Mustard: [
+          { mandi: "Ferozepur", price: 5550 },
+          { mandi: "Moga", price: 5620 },
+          { mandi: "Barnala", price: 5580 }
+        ]
+      }
+    };
+
+    // Helpers
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+    function showDashboard(){
+      $('#page-login').classList.add('hidden');
+      $('#page-dashboard').classList.remove('hidden');
+    }
+    function showLogin(){
+      $('#page-dashboard').classList.add('hidden');
+      $('#page-login').classList.remove('hidden');
+    }
+
+    // Language strings
+    const i18n = {
+      Punjabi: {
+        welcome: name => `ਸੁਆਗਤ ਹੈ, ${name}`,
+        title: "ਸੁਆਗਤ",
+        chatWelcome: "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੌਸਮ, ਮਿੱਟੀ, ਖਾਦ, ਕੀੜੇ ਅਤੇ ਮੰਡੀ ਭਾਵ ਬਾਰੇ ਪੁੱਛੋ।",
+        genericTip: "ਧੰਨਵਾਦ! ਸਧਾਰਨ ਸੁਝਾਅ: ਸਿੰਚਾਈ ਤੋਂ ਪਹਿਲਾਂ 3–5 ਦਿਨ ਦਾ ਮੌਸਮ ਜ਼ਰੂਰ ਵੇਖੋ।"
+      },
+      Hindi: {
+        welcome: name => `स्वागत है, ${name}`,
+        title: "स्वागत",
+        chatWelcome: "नमस्ते! मौसम, मिट्टी, खाद, कीट और मंडी भाव के बारे में पूछें।",
+        genericTip: "धन्यवाद! सामान्य सुझाव: सिंचाई से पहले 3–5 दिन का मौसम ज़रूर देखें।"
+      },
+      English: {
+        welcome: name => `Welcome, ${name}`,
+        title: "Welcome",
+        chatWelcome: "Hello! Ask about weather, soil, fertilizers, pests, and mandi prices.",
+        genericTip: "Thanks! Tip: Check the 3–5 day forecast before irrigation."
+      }
+    };
+
+    // Content loaders
+    function populateWelcome(user){
+      const lang = i18n[user.language] || i18n.English;
+      $('#welcome-title').textContent = lang.title;
+      $('#welcome-name').textContent = (lang.welcome(user.name || 'Farmer'));
+      $('#welcome-location').textContent = user.location || '—';
+      $('#welcome-soil').textContent = user.soil || 'Loam';
+      $('#welcome-language').textContent = user.language;
+      $('#chat-welcome').textContent = lang.chatWelcome;
+    }
+
+    function renderList(el, items){
+      const html = items.map(t => `<li class="rounded-lg border border-slate-200 p-3 bg-white">${t}</li>`).join('');
+      if (el.innerHTML !== html) el.innerHTML = html;
+    }
+
+    function loadWeather(district){
+      const alerts = [
+        `District: ${district}. Clear mornings, light clouds by evening.`,
+        "Gusty winds possible tomorrow afternoon; secure straw bundles.",
+        "Dry window next 2–3 days — suitable for fertilizer application."
+      ];
+      renderList($('#weather-list'), alerts);
+    }
+
+    function loadSoil(soil, cropHint="Paddy"){
+      const lines = {
+        Alluvial: [
+          "Alluvial soils are fertile — maintain balanced NPK and organic matter.",
+          "Apply split nitrogen doses to reduce losses; irrigate lightly after application."
+        ],
+        Sandy: [
+          "Sandy soils need frequent light irrigation and organic mulching.",
+          "Split N in 3–4 parts; prefer compost to improve water holding."
+        ],
+        Clay: [
+          "Ensure good drainage to avoid waterlogging and root issues.",
+          "Add gypsum/organic matter to improve structure; avoid working when wet."
+        ],
+        Loam: [
+          "Loam offers good balance — maintain NPK 10:26:26 as per crop stage.",
+          "Top dress nitrogen during tillering/flowering; monitor micronutrients (Zn)."
+        ]
+      };
+      const base = lines[soil] || lines.Loam;
+      const npk = `Punjab NPK tip: For ${cropHint}, follow local recommendations and avoid overuse of nitrogen to reduce lodging.`;
+      renderList($('#soil-list'), [ ...base, npk ]);
+    }
+
+    function cropAdvisory(crop){
+      const data = {
+        Paddy: [
+          "Maintain 2–5 cm water; avoid standing water at late tillering.",
+          "Apply urea in splits; ensure Zn if deficiency symptoms appear.",
+          "Scout for rice blast; avoid overhead wetting of leaves."
+        ],
+        Wheat: [
+          "Irrigate at CRI, tillering, booting and milking stages.",
+          "Balanced NPK; avoid excess N to reduce lodging risk.",
+          "Monitor for rust; remove infected leaves early."
+        ],
+        Maize: [
+          "Ensure good drainage; maize dislikes waterlogging.",
+          "Side-dress nitrogen near knee-high stage.",
+          "Watch for fall armyworm; use pheromone traps."
+        ],
+        Cotton: [
+          "Follow IPM for bollworm; maintain clean fields.",
+          "Balanced fertilization with adequate potash.",
+          "Avoid water stress during flowering/ball formation."
+        ],
+        Sugarcane: [
+          "Timely earthing up; maintain moisture uniformly.",
+          "Apply N in splits; ensure adequate K for sugar content.",
+          "Monitor for borers and red rot; remove affected stools."
+        ],
+        Mustard: [
+          "Irrigate at branching, flowering, and pod formation.",
+          "Apply sulfur if needed; balanced NPK improves oil content.",
+          "Scout for aphids; consider yellow sticky traps."
+        ]
+      };
+      return data[crop] || data.Paddy;
+    }
+
+    function renderCrop(crop){
+      const list = cropAdvisory(crop).map(t => `
+        <li class="rounded-xl border border-slate-200 bg-white p-4 flex gap-3">
+          <div class="h-7 w-7 rounded-md bg-yellow-100 text-yellow-700 grid place-items-center">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2v20M7 7c3 0 5 3 5 6M17 7c-3 0-5 3-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="text-sm">${t}</div>
+        </li>
+      `).join('');
+      $('#crop-list').innerHTML = list;
+    }
+
+    function loadMarket(crop){
+      const data = state.marketData[crop] || [];
+      const html = data.map((d,i)=>`
+        <div class="rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-between" data-id="${crop}-${i}">
+          <div>
+            <p class="text-slate-500">${d.mandi}</p>
+            <p class="font-semibold">${crop}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs text-slate-500">Avg price (₹/quintal)</p>
+            <p class="text-lg font-semibold text-amber-700">₹${d.price}</p>
+          </div>
+        </div>
+      `).join('');
+      $('#market-list').innerHTML = html;
+    }
+
+    // Chatbot (simple rule-based + language response)
+    function addChatBubble(text, from='ai'){
+      const area = $('#chat-area');
+      const wrap = document.createElement('div');
+      wrap.className = 'flex gap-2';
+      if (from === 'me') wrap.classList.add('justify-end');
+
+      const avatar = document.createElement('div');
+      avatar.className = 'h-7 w-7 rounded-full grid place-items-center text-xs';
+      if (from === 'ai'){ avatar.classList.add('bg-slate-800','text-white'); avatar.textContent='AI'; }
+      else { avatar.classList.add('bg-green-600','text-white'); avatar.textContent='Me'; }
+
+      const bubble = document.createElement('div');
+      bubble.className = 'max-w-[80%] rounded-2xl p-3 text-sm';
+      if (from === 'ai') bubble.classList.add('bg-slate-100','rounded-tl-sm');
+      else bubble.classList.add('bg-green-600','text-white','rounded-tr-sm');
+      bubble.textContent = text;
+
+      if (from === 'ai'){ wrap.append(avatar,bubble); } else { wrap.append(bubble,avatar); }
+      area.appendChild(wrap);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function aiRespond(message){
+      const langKey = state.user?.language || 'English';
+      const lang = i18n[langKey] || i18n.English;
+      const msg = (message||'').toLowerCase();
+
+      let replyEn = lang.genericTip;
+      if (msg.includes('weather') || msg.includes('ਮੌਸਮ') || msg.includes('मौसम')) {
+        replyEn = "Next 3 days look mostly dry with light winds — good for field work.";
+      } else if (msg.includes('soil') || msg.includes('ਮਿੱਟੀ') || msg.includes('मिट्टी')) {
+        replyEn = "Improve soil with compost; keep NPK balanced and irrigate lightly after fertilization.";
+      } else if (msg.includes('fertilizer') || msg.includes('ਖਾਦ') || msg.includes('खाद')) {
+        replyEn = "Use split nitrogen doses; follow local NPK guidance by crop stage.";
+      } else if (msg.includes('pest') || msg.includes('ਕੀੜੇ') || msg.includes('कीट') || msg.includes('disease') || msg.includes('ਰੋਗ') || msg.includes('रोग')) {
+        replyEn = "Scout early morning; use IPM practices and share a clear photo if unsure.";
+      } else if (msg.includes('market') || msg.includes('mandi') || msg.includes('ਮੰਡੀ') || msg.includes('मंडी') || msg.includes('price') || msg.includes('भाव')) {
+        replyEn = "Check the Mandi section; select your crop to see average prices in Punjab.";
+      } else if (msg.includes('wheat') || msg.includes('ਗੇਂਹੂ') || msg.includes('गेहूं')) {
+        replyEn = "Irrigate at CRI and key stages; avoid excess N to reduce lodging.";
+      } else if (msg.includes('paddy') || msg.includes('ਧਾਨ') || msg.includes('चावल')) {
+        replyEn = "Maintain shallow water; manage nitrogen in splits and watch for blast.";
+      }
+
+      // Simple language mapping (concise)
+      const map = {
+        Punjabi: {
+          "Next 3 days look mostly dry with light winds — good for field work.": "ਅਗਲੇ 3 ਦਿਨ ਜ਼ਿਆਦਾਤਰ ਖੁਸ਼ਕ ਤੇ ਹਲਕੀ ਹਵਾਵਾਂ — ਖੇਤ ਦੇ ਕੰਮ ਲਈ ਠੀਕ ਸਮਾਂ।",
+          "Improve soil with compost; keep NPK balanced and irrigate lightly after fertilization.": "ਖਾਦ/ਕੰਪੋਸਟ ਨਾਲ ਮਿੱਟੀ ਸੁਧਾਰੋ; NPK ਸੰਤੁਲਿਤ ਰੱਖੋ ਅਤੇ ਖਾਦ ਤੋਂ ਬਾਅਦ ਹਲਕੀ ਸਿੰਚਾਈ ਕਰੋ।",
+          "Use split nitrogen doses; follow local NPK guidance by crop stage.": "ਨਾਈਟ੍ਰੋਜਨ ਨੂੰ ਵੰਡ ਕੇ ਦਿਉ; ਫਸਲ ਦੇ ਪੜਾਅ ਅਨੁਸਾਰ ਸਥਾਨਕ NPK ਸਲਾਹ ਮਾਨੋ।",
+          "Scout early morning; use IPM practices and share a clear photo if unsure.": "ਸਵੇਰੇ ਜ਼ਲਦੀ ਨਿਗਰਾਨੀ ਕਰੋ; IPM ਅਪਣਾਓ ਅਤੇ ਸ਼ੱਕ ਹੋਵੇ ਤਾਂ ਸਾਫ਼ ਤਸਵੀਰ ਸਾਂਝੀ ਕਰੋ।",
+          "Check the Mandi section; select your crop to see average prices in Punjab.": "ਮੰਡੀ ਹਿੱਸਾ ਵੇਖੋ; ਆਪਣੀ ਫਸਲ ਚੁਣੋ ਤੇ ਪੰਜਾਬ ਦੇ ਔਸਤ ਭਾਵ ਵੇਖੋ।",
+          "Irrigate at CRI and key stages; avoid excess N to reduce lodging.": "CRI ਅਤੇ ਮਹੱਤਵਪੂਰਨ ਪੜਾਵਾਂ ‘ਤੇ ਸਿੰਚਾਈ ਕਰੋ; ਡਿੱਗ ਪੈਣ ਤੋਂ ਬਚਣ ਲਈ ਵੱਧ N ਤੋਂ ਪਰਹੇਜ਼ ਕਰੋ।",
+          "Maintain shallow water; manage nitrogen in splits and watch for blast.": "ਹਲਕਾ ਪਾਣੀ ਬਰਕਰਾਰ ਰੱਖੋ; ਨਾਈਟ੍ਰੋਜਨ ਵੰਡ ਕੇ ਦਿਉ ਅਤੇ ਬਲਾਸਟ ਲਈ ਨਿਗਰਾਨੀ ਕਰੋ।",
+          [i18n.English.genericTip]: i18n.Punjabi.genericTip
+        },
+        Hindi: {
+          "Next 3 days look mostly dry with light winds — good for field work.": "अगले 3 दिन अधिकतर सूखे और हल्की हवा — खेत कार्य के लिए अच्छा समय।",
+          "Improve soil with compost; keep NPK balanced and irrigate lightly after fertilization.": "कम्पोस्ट से मिट्टी सुधारेँ; NPK संतुलित रखें और खाद के बाद हल्की सिंचाई करें।",
+          "Use split nitrogen doses; follow local NPK guidance by crop stage.": "नाइट्रोजन को बाँटकर दें; फसल अवस्था के अनुसार स्थानीय NPK मार्गदर्शन मानें।",
+          "Scout early morning; use IPM practices and share a clear photo if unsure.": "सुबह जल्दी निरीक्षण करें; IPM अपनाएँ और संदेह हो तो साफ़ फोटो साझा करें।",
+          "Check the Mandi section; select your crop to see average prices in Punjab.": "मंडी अनुभाग देखें; अपनी फसल चुनें और पंजाब के औसत भाव देखें।",
+          "Irrigate at CRI and key stages; avoid excess N to reduce lodging.": "CRI और मुख्य अवस्थाओं पर सिंचाई करें; गिरने से बचाने हेतु अधिक N से बचें।",
+          "Maintain shallow water; manage nitrogen in splits and watch for blast.": "हल्की जल परत रखें; नाइट्रोजन को विभाजित खुराक में दें और ब्लास्ट पर नज़र रखें।",
+          [i18n.English.genericTip]: i18n.Hindi.genericTip
+        },
+        English: {}
+      };
+      const localized = (map[langKey] && map[langKey][replyEn]) ? map[langKey][replyEn] : replyEn;
+      setTimeout(()=> addChatBubble(localized, 'ai'), 400);
+    }
+
+    // Events
+    $('#login-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const user = {
+        name: $('#name').value.trim() || 'Farmer',
+        language: $('#language').value,
+        location: $('#location').value,
+        soil: $('#soil').value
+      };
+      state.user = user;
+
+      populateWelcome(user);
+      loadWeather(user.location);
+      loadSoil(user.soil, $('#crop-select')?.value || 'Paddy');
+      renderCrop($('#crop-select')?.value || 'Paddy');
+      loadMarket($('#market-crop').value);
+
+      showDashboard();
+    });
+
+    $('#logout').addEventListener('click', ()=>{
+      state.user = null;
+      $('#login-form').reset();
+      showLogin();
+    });
+
+    $('#edit-profile').addEventListener('click', ()=>{
+      if (state.user){
+        $('#name').value = state.user.name;
+        $('#language').value = state.user.language;
+        $('#location').value = state.user.location;
+        $('#soil').value = state.user.soil;
+      }
+      showLogin();
+    });
+
+    $('#refresh').addEventListener('click', ()=>{
+      if (!state.user) return;
+      loadWeather(state.user.location);
+      loadSoil(state.user.soil, $('#crop-select').value);
+      renderCrop($('#crop-select').value);
+      const btn = $('#refresh'); btn.disabled = true;
+      const old = btn.textContent; btn.textContent = 'Refreshing...';
+      setTimeout(()=>{ btn.textContent = old; btn.disabled = false; }, 700);
+    });
+
+    // Crop advisory controls
+    $('#crop-update').addEventListener('click', ()=>{
+      renderCrop($('#crop-select').value);
+      if (state.user) loadSoil(state.user.soil, $('#crop-select').value);
+    });
+
+    // Pest upload demo
+    $('#pest-image').addEventListener('change', ()=>{
+      const res = $('#pest-result');
+      if ($('#pest-image').files.length > 0) res.classList.remove('hidden');
+      else res.classList.add('hidden');
+    });
+
+    // Market
+    $('#market-refresh').addEventListener('click', ()=>{
+      loadMarket($('#market-crop').value);
+    });
+
+    // Chat
+    $('#chat-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const input = $('#chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      addChatBubble(text, 'me');
+      input.value = '';
+      aiRespond(text);
+    });
+
+    // Mic demo (no audio support)
+    let micOn = false;
+    $('#chat-mic').addEventListener('click', ()=>{
+      micOn = !micOn;
+      const mic = $('#chat-mic');
+      if (micOn){
+        mic.classList.add('pulse');
+        const msg = state.user?.language === 'Punjabi' ? "ਸੁਣ ਰਿਹਾ ਹੈ... (ਡੈਮੋ)"
+                : state.user?.language === 'Hindi' ? "सुन रहा है... (डेमो)"
+                : "Listening... (demo)";
+        addChatBubble(msg, 'ai');
+      } else {
+        mic.classList.remove('pulse');
+        const msg = state.user?.language === 'Punjabi' ? "ਸੁਣਨਾ ਰੁਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਟਾਈਪ ਕਰੋ।"
+                : state.user?.language === 'Hindi' ? "सुनना रोका गया। कृपया टाइप करें।"
+                : "Stopped listening. Please type your question.";
+        addChatBubble(msg, 'ai');
+      }
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97deb82b06f69a8d',t:'MTc1NzY3MjkyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
